@@ -265,6 +265,47 @@ export const en = {
     closePackIntro:
       "One CSV of closing stock at a month-end date — quantity and both values by location, product and finish. This is what Finance posts against in ERPNext.",
   },
+
+  counts: {
+    title: "Stock counts",
+    openTitle: "Open a count",
+    openAction: "Open count",
+    countDate: "Count date",
+    status: "Status",
+    accuracy: "Line accuracy",
+    netVariance: "Net variance",
+    open: "Open",
+    submitted: "Submitted",
+    posted: "Posted",
+    cancelled: "Cancelled",
+    none: "No stock counts yet.",
+    alreadyOpen: "There is already an open or submitted count for this location.",
+
+    countStock: "Count stock",
+    progress: (done: number, total: number) => `${done} of ${total} counted`,
+    counted: "Counted",
+    addItem: "Add an item not on this list",
+    submitCount: "Submit count",
+    submitConfirm: "Submit this count? The variance becomes visible to the Operations Manager.",
+    submitted_toast: "Count submitted.",
+
+    review: "Review",
+    system: "System",
+    variance: "Variance",
+    valueImpact: "Value impact",
+    lineAccuracy: "Line accuracy",
+    unitsOver: "Units over",
+    unitsShort: "Units short",
+    netValueImpact: "Net value impact",
+    lateWarning:
+      "Some movements at this location were entered after the count was opened but dated on or before the count date. The posted adjustments may be slightly off.",
+    postCount: "Post count",
+    postConfirm: "Post this count? An adjustment is created for every non-zero variance.",
+    posted_toast: "Count posted. Adjustments created for every variance.",
+    cancelCount: "Cancel count",
+    cancelConfirm: "Cancel this count? Nothing is posted.",
+    postedReadOnly: "This count is posted. Adjustments have been created.",
+  },
 } as const;
 
 export type Strings = typeof en;

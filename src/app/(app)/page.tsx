@@ -38,6 +38,18 @@ export default async function HomePage() {
     inboundCount = count ?? 0;
   }
 
+  // An open count at this user's location (brief §8.1 — "Count stock" appears only then).
+  let openCountId: string | null = null;
+  if (canCapture && user.homeLocationId) {
+    const { data: oc } = await supabase
+      .from("stock_counts")
+      .select("id")
+      .eq("location_id", user.homeLocationId)
+      .eq("status", "open")
+      .maybeSingle();
+    openCountId = oc?.id ?? null;
+  }
+
   const tiles: Tile[] = [
     { href: "/transfers/receive", label: t.nav.confirmReceipt, show: canCapture },
     { href: "/counts", label: t.nav.counts, show: true },
@@ -75,6 +87,15 @@ export default async function HomePage() {
           <span className="num rounded-full bg-ink px-3 py-0.5 text-page">
             {inboundCount}
           </span>
+        </Link>
+      ) : null}
+
+      {openCountId ? (
+        <Link
+          href={`/counts/${openCountId}/count`}
+          className="tap flex items-center rounded-lg border border-ink px-4 py-4 font-semibold"
+        >
+          {t.counts.countStock}
         </Link>
       ) : null}
 
