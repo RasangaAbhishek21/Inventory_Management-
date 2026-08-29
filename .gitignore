@@ -38,6 +38,11 @@ yarn-error.log*
 /supabase/.branches
 /supabase/.temp
 
+# serwist (service worker built at compile time)
+/public/sw.js
+/public/sw.js.map
+/public/swe-worker-*.js
+
 # vercel
 .vercel
 

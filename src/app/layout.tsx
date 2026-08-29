@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { Toaster } from "sonner";
+import { RegisterSW } from "@/components/pwa/RegisterSW";
 import { t } from "@/strings";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${appSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-page text-ink">
+        <RegisterSW />
         {children}
         <Toaster
           position="top-center"

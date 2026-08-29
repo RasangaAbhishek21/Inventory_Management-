@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
@@ -18,10 +18,12 @@
     "db:push:remote": "supabase db push --db-url \"$SUPABASE_DB_URL\" --include-all --include-seed",
     "gen:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/database.ts",
     "create-admin": "tsx scripts/create-admin.ts",
-    "delete-user": "tsx scripts/delete-user.ts"
+    "delete-user": "tsx scripts/delete-user.ts",
+    "gen:icons": "node scripts/gen-icons.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
+    "@serwist/next": "^9.5.12",
     "@supabase/ssr": "^0.12.5",
     "@supabase/supabase-js": "^2.112.4",
     "@tanstack/react-query": "^5.102.8",
@@ -33,6 +35,7 @@
     "react-dom": "19.2.8",
     "react-hook-form": "^7.86.0",
     "server-only": "^0.0.1",
+    "serwist": "^9.5.12",
     "sonner": "^2.0.8",
     "zod": "^4.5.2"
   },
@@ -52,6 +55,7 @@
     "eslint-config-next": "16.3.3",
     "jsdom": "^30.0.1",
     "pg": "^8.23.0",
+    "sharp": "^0.35.4",
     "supabase": "^2.116.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.12",

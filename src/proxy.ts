@@ -12,7 +12,8 @@ export const config = {
      * All request paths except:
      *  - _next/static, _next/image
      *  - favicon, manifest, icons and other image assets
+     *  - the service worker and the offline fallback (must work with no session)
      */
-    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|icon|apple-icon|icons/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|icon|apple-icon|icons/|sw.js|offline|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

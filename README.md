@@ -71,16 +71,31 @@ hand in the Supabase dashboard.
 ### Running the app
 
 ```bash
-npm run dev            # http://localhost:3000
+npm run dev            # http://localhost:3000 (Turbopack; service worker disabled)
+npm run build          # runs `next build --webpack` — the Serwist SW plugin needs webpack
+npm start              # serve the production build
+```
+
+### PWA icons
+
+`public/icons/*` are generated from an inline mark:
+
+```bash
+npm run gen:icons      # rewrites icon-192 / icon-512 / icon-maskable-512
 ```
 
 ### Tests
 
 ```bash
-npm run test           # Vitest — unit + route-handler integration
-npm run test:db        # pgTAP — the 24 acceptance tests (needs Docker / local Supabase)
-npm run test:e2e       # Playwright — capture-screen happy paths
+npm run test           # everything (unit + db)
+npm run test:unit      # Vitest — pure logic + schema
+npm run test:db        # Vitest + pg — the brief §11 acceptance tests, each in a
+                       # rolled-back transaction against SUPABASE_DB_URL
+npm run test:e2e       # Playwright (scaffold)
 ```
+
+CI (`.github/workflows/ci.yml`) runs `test:unit` + lint + typecheck + build, and a
+separate job runs `test:db` against a fresh local Supabase in Docker.
 
 ## Creating the first admin user
 
