@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PrimaryAction } from "@/components/ui/PrimaryAction";
@@ -30,6 +30,8 @@ export function CaptureForm({
   orderNumber = "hidden",
   dateLabel,
   notesLabel,
+  balances,
+  restrictToStock = false,
 }: {
   products: PickerProduct[];
   finishes: { id: string; name: string }[];
@@ -42,6 +44,10 @@ export function CaptureForm({
   orderNumber?: "required" | "optional" | "hidden";
   dateLabel: string;
   notesLabel?: string;
+  /** on-hand balances, needed only when restrictToStock is set */
+  balances?: { location_id: string; product_id: string; qty_on_hand: number }[];
+  /** limit the picker to products with stock at the chosen location (deliver) */
+  restrictToStock?: boolean;
 }) {
   const router = useRouter();
   const [locationId, setLocationId] = useState(defaultLocationId);
@@ -51,6 +57,17 @@ export function CaptureForm({
   const [lines, setLines] = useState<Line[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const locationName = locations.find((l) => l.id === locationId)?.name ?? "";
+  const pickerProducts = useMemo(() => {
+    if (!restrictToStock || !balances) return products;
+    const withStock = new Set(
+      balances
+        .filter((b) => b.location_id === locationId && b.qty_on_hand > 0)
+        .map((b) => b.product_id),
+    );
+    return products.filter((p) => withStock.has(p.id));
+  }, [restrictToStock, balances, products, locationId]);
 
   const patch = (key: string, next: Partial<Line>) =>
     setLines((cur) => cur.map((l) => (l.key === key ? { ...l, ...next } : l)));
@@ -111,8 +128,9 @@ export function CaptureForm({
       ) : null}
 
       <ProductPicker
-        products={products}
+        products={pickerProducts}
         thumbBaseUrl={thumbBaseUrl}
+        emptyLabel={restrictToStock ? t.capture.nothingAtSource(locationName) : undefined}
         onSelect={(p) =>
           setLines((cur) => [
             ...cur,

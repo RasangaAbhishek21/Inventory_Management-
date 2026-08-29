@@ -1,4 +1,5 @@
 import { requireUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { getPickerData, getLocations, STORAGE_RENDER_BASE } from "@/lib/capture-data";
 import { CaptureForm } from "@/components/capture/CaptureForm";
 import { t } from "@/strings";
@@ -6,10 +7,12 @@ import { recordDelivery } from "./actions";
 
 export default async function DeliverPage() {
   const user = await requireUser();
+  const supabase = await createClient();
 
-  const [{ products, finishes }, locations] = await Promise.all([
+  const [{ products, finishes }, locations, { data: balances }] = await Promise.all([
     getPickerData(),
     getLocations(),
+    supabase.from("v_stock_balances").select("location_id, product_id, qty_on_hand"),
   ]);
   const isStaff = user.role === "staff";
 
@@ -38,6 +41,8 @@ export default async function DeliverPage() {
         submitLabel={t.capture.deliverAction}
         orderNumber="required"
         dateLabel={t.capture.deliveryDate}
+        balances={balances ?? []}
+        restrictToStock
       />
     </div>
   );
