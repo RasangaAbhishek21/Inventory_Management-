@@ -7,6 +7,9 @@ import {
   getStockOnHand,
   getMovementRows,
   getInTransit,
+  getAdjustmentExceptions,
+  getStockAccuracy,
+  monthStart,
 } from "@/lib/reports";
 import { formatValue } from "@/lib/format";
 import type { MovementType } from "@/types/database";
@@ -23,7 +26,13 @@ export async function GET(
     return new Response("Forbidden", { status: 403 });
   }
 
-  const { name } = await params;
+  const { name: reportName } = await params;
+  // Brief §5.5 — the exceptions report is finance / admin only.
+  if (reportName === "adjustment-exceptions" && !["finance", "admin"].includes(user.role)) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
+  const name = reportName;
   const sp = request.nextUrl.searchParams;
   const supabase = await createClient();
   const arg = (k: string) => sp.get(k) || null;
@@ -98,6 +107,47 @@ export async function GET(
         ]),
       );
       return csvResponse(`in-transit-${new Date().toISOString().slice(0, 10)}.csv`, csv);
+    }
+
+    if (name === "adjustment-exceptions") {
+      const month = monthStart(arg("month"));
+      const rows = await getAdjustmentExceptions(supabase, month);
+      const csv = toCsv(
+        ["Date", "Location", "Product", "Finish", "Quantity", SELLING, "Reason", "Note", "Entered by"],
+        rows.map((r) => [
+          r.date,
+          r.location,
+          r.product,
+          r.finish ?? "",
+          r.quantity,
+          formatValue(r.valueAtSelling),
+          r.reason ?? "",
+          r.notes ?? "",
+          r.enteredBy,
+        ]),
+      );
+      return csvResponse(`adjustment-exceptions-${month.slice(0, 7)}.csv`, csv);
+    }
+
+    if (name === "stock-accuracy") {
+      const rows = await getStockAccuracy(supabase, {
+        locationId: arg("location"),
+        month: arg("month") ? `${arg("month")}-01` : null,
+      });
+      const csv = toCsv(
+        ["Month", "Location", "Lines counted", "Line accuracy", "Unit accuracy", "Units over", "Units short", "Net value impact"],
+        rows.map((r) => [
+          r.month,
+          r.location,
+          r.linesCounted,
+          r.lineAccuracy == null ? "" : (r.lineAccuracy * 100).toFixed(1) + "%",
+          r.unitAccuracy == null ? "" : (r.unitAccuracy * 100).toFixed(1) + "%",
+          r.unitsOver,
+          r.unitsShort,
+          formatValue(r.netValueImpact),
+        ]),
+      );
+      return csvResponse(`stock-accuracy-${new Date().toISOString().slice(0, 10)}.csv`, csv);
     }
 
     return new Response("Unknown report", { status: 404 });

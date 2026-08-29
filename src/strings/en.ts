@@ -264,6 +264,18 @@ export const en = {
     noRows: "No rows for the selected range.",
     closePackIntro:
       "One CSV of closing stock at a month-end date — quantity and both values by location, product and finish. This is what Finance posts against in ERPNext.",
+
+    adjustmentExceptions: "Adjustment exceptions",
+    stockAccuracy: "Stock accuracy",
+    month: "Month",
+    exceptionsIntro:
+      "Adjustments large enough to review — 3 or more units, or 100,000 or more at selling price. Visibility is the control; nothing here was blocked.",
+    accuracyIntro:
+      "The count result by location and month. Line accuracy is zero-variance lines over lines counted; unit accuracy is one minus total absolute unit variance over total system units.",
+    unitAccuracy: "Unit accuracy",
+    linesCounted: "Lines counted",
+    noExceptions: "No adjustments crossed the threshold this month.",
+    noAccuracy: "No posted counts yet.",
   },
 
   counts: {

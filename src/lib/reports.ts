@@ -211,3 +211,72 @@ export async function getClosePack(supabase: Client, monthEnd: string) {
   const { rows } = await getStockOnHand(supabase, { asAt: monthEnd });
   return rows;
 }
+
+/** "YYYY-MM" -> "YYYY-MM-01"; anything else -> current month's first day. */
+export function monthStart(ym?: string | null): string {
+  if (ym && /^\d{4}-\d{2}$/.test(ym)) return `${ym}-01`;
+  return isoDate().slice(0, 7) + "-01";
+}
+
+// ---------------------------------------------------------------------------
+// Adjustment exceptions (brief §5.5, §8.10) — finance / admin only
+// ---------------------------------------------------------------------------
+export async function getAdjustmentExceptions(supabase: Client, month: string) {
+  const { data, error } = await supabase
+    .from("v_adjustment_exceptions")
+    .select(
+      "id, transaction_date, location, product, finish_id, quantity, unit_selling_price, abs_value_at_selling_price, reason, notes, entered_by_name",
+    )
+    .eq("month", month)
+    .order("abs_value_at_selling_price", { ascending: false });
+  if (error) throw new Error(error.message);
+
+  const finishIds = [...new Set((data ?? []).map((r) => r.finish_id).filter(Boolean))] as string[];
+  const { data: finishes } = await supabase
+    .from("finishes")
+    .select("id, name")
+    .in("id", finishIds.length ? finishIds : ["00000000-0000-0000-0000-000000000000"]);
+  const fName = new Map((finishes ?? []).map((f) => [f.id, f.name]));
+
+  return (data ?? []).map((r) => ({
+    date: r.transaction_date,
+    location: r.location,
+    product: r.product,
+    finish: r.finish_id ? (fName.get(r.finish_id) ?? null) : null,
+    quantity: r.quantity,
+    valueAtSelling: Number(r.abs_value_at_selling_price),
+    reason: r.reason,
+    notes: r.notes,
+    enteredBy: r.entered_by_name,
+  }));
+}
+
+// ---------------------------------------------------------------------------
+// Stock accuracy (brief §8.10, §12) — by location and month
+// ---------------------------------------------------------------------------
+export async function getStockAccuracy(
+  supabase: Client,
+  params: { locationId?: string | null; month?: string | null },
+) {
+  let q = supabase
+    .from("v_stock_accuracy")
+    .select(
+      "location, month, lines_counted, lines_zero_variance, line_accuracy, unit_accuracy, units_over, units_short, net_value_impact",
+    )
+    .order("month", { ascending: false })
+    .order("location", { ascending: true });
+  if (params.locationId) q = q.eq("location_id", params.locationId);
+  if (params.month) q = q.eq("month", params.month);
+  const { data, error } = await q;
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((r) => ({
+    location: r.location,
+    month: String(r.month).slice(0, 7),
+    linesCounted: r.lines_counted,
+    lineAccuracy: r.line_accuracy,
+    unitAccuracy: r.unit_accuracy,
+    unitsOver: r.units_over,
+    unitsShort: r.units_short,
+    netValueImpact: Number(r.net_value_impact),
+  }));
+}
