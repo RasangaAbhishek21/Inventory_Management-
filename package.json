@@ -16,7 +16,8 @@
     "db:push": "supabase db push --db-url \"$SUPABASE_DB_URL\"",
     "db:push:remote": "supabase db push --db-url \"$SUPABASE_DB_URL\" --include-seed",
     "gen:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/database.ts",
-    "create-admin": "tsx scripts/create-admin.ts"
+    "create-admin": "tsx scripts/create-admin.ts",
+    "delete-user": "tsx scripts/delete-user.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
