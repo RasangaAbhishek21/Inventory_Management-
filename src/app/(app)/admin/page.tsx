@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { t } from "@/strings";
 
 export default async function AdminIndex() {
@@ -17,14 +18,14 @@ export default async function AdminIndex() {
   ].filter((x) => x.show);
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-xl font-semibold">{t.admin.title}</h1>
-      <nav className="grid grid-cols-2 gap-3">
+    <div className="flex flex-col gap-5">
+      <PageHeader title={t.admin.title} />
+      <nav className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {tiles.map((tile) => (
           <Link
             key={tile.href}
             href={tile.href}
-            className="tap flex min-h-20 items-center rounded-lg border border-sand bg-surface px-4 py-4 font-medium"
+            className="flex min-h-16 items-center rounded-xl border border-border bg-surface px-4 py-4 text-sm font-medium shadow-sm transition-colors hover:bg-surface-subtle"
           >
             {tile.label}
           </Link>

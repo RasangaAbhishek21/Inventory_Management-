@@ -68,9 +68,9 @@ export default async function UsersPage() {
         <PrimaryAction type="submit">{t.admin.add}</PrimaryAction>
       </form>
 
-      <ul className="flex flex-col divide-y divide-sand">
+      <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
         {(profiles ?? []).map((p) => (
-          <li key={p.id} className="flex flex-col gap-2 py-3">
+          <li key={p.id} className="flex flex-col gap-2 px-4 py-3">
             <div className="text-sm text-ink-60">{emailById.get(p.id)}</div>
             <form action={updateUser.bind(null, p.id)} className="flex flex-col gap-2">
               <input

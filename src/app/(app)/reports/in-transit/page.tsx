@@ -21,9 +21,9 @@ export default async function InTransitReportPage() {
       {rows.length === 0 ? (
         <p className="text-ink-60">{t.empty.inbound}</p>
       ) : (
-        <ul className="flex flex-col divide-y divide-sand">
+        <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
           {rows.map((r) => (
-            <li key={r.id} className="flex flex-col gap-1 py-3">
+            <li key={r.id} className="flex flex-col gap-1 px-4 py-3">
               <div className="flex items-center justify-between">
                 <span className="num font-semibold">{r.transfer_ref}</span>
                 <AgeBadge

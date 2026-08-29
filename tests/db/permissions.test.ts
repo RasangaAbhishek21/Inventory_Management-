@@ -58,9 +58,9 @@ describe("permissions (RLS)", () => {
 
   it("10: a staff user cannot open, post or cancel a stock count", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
-      const staff = await t.makeActor("staff", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
+      const staff = await t.makeActor("staff", { locationId: mah });
       const product = await t.makeProduct("Perm Table", 10000);
 
       await t.asUser(ops);

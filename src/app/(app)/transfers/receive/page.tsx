@@ -26,10 +26,10 @@ export default async function ReceiveListPage() {
       {!inbound || inbound.length === 0 ? (
         <p className="text-ink-60">{t.empty.inbound}</p>
       ) : (
-        <ul className="flex flex-col divide-y divide-sand">
+        <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
           {inbound.map((tr) => (
             <li key={tr.id}>
-              <Link href={`/transfers/receive/${tr.id}`} className="tap flex flex-col gap-1 py-3">
+              <Link href={`/transfers/receive/${tr.id}`} className="tap flex flex-col gap-1 px-4 py-3 hover:bg-surface-subtle">
                 <div className="flex items-center justify-between gap-2">
                   <span className="num font-semibold">{tr.transfer_ref}</span>
                   <AgeBadge hours={hoursSince(tr.dispatched_at)} />

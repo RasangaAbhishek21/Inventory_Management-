@@ -105,10 +105,10 @@ export default async function MovementReportPage({
       {rows.length === 0 ? (
         <p className="text-ink-60">{t.reports.noRows}</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ink text-left">
+              <tr className="border-b border-border bg-surface-subtle text-left text-xs uppercase tracking-wide text-ink-60">
                 <th className="px-2 py-1">{t.common.date}</th>
                 <th className="px-2 py-1">Type</th>
                 <th className="px-2 py-1">{t.common.location}</th>
@@ -121,7 +121,7 @@ export default async function MovementReportPage({
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-b border-sand">
+                <tr key={r.id} className="border-b border-border">
                   <td className="px-2 py-1">{r.date}</td>
                   <td className="px-2 py-1">
                     {r.type}

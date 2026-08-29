@@ -69,6 +69,7 @@ export const en = {
     required: "required",
     loading: "Loading…",
     search: "Search",
+    status: "Status",
   },
 
   empty: {

@@ -1,11 +1,18 @@
 import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { STORAGE_RENDER_BASE } from "@/lib/capture-data";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { SpotInventory } from "./spot-inventory";
 import { t } from "@/strings";
 
-export default async function SpotInventoryPage() {
+export default async function SpotInventoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   await requireUser();
+  const sp = await searchParams;
+  const initialQ = typeof sp.q === "string" ? sp.q : "";
   const supabase = await createClient();
 
   const [
@@ -39,11 +46,8 @@ export default async function SpotInventoryPage() {
   }));
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-xl font-semibold">{t.spot.title}</h1>
-        <p className="text-ink-60">{t.spot.subtitle}</p>
-      </div>
+    <div className="flex flex-col gap-5">
+      <PageHeader title={t.spot.title} description={t.spot.subtitle} />
       <SpotInventory
         balances={balances ?? []}
         inTransit={inTransit}
@@ -54,6 +58,7 @@ export default async function SpotInventoryPage() {
         categories={categories ?? []}
         finishNames={Object.fromEntries((finishes ?? []).map((f) => [f.id, f.name]))}
         thumbBaseUrl={STORAGE_RENDER_BASE}
+        initialQ={initialQ}
       />
     </div>
   );

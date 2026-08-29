@@ -100,16 +100,16 @@ export function TransferForm({
 
   if (sentRef) {
     return (
-      <div className="flex flex-col gap-4 rounded-lg bg-yellow p-5 text-ink">
-        <p className="text-sm">{t.confirmations.transferSent(sentRef)}</p>
-        <p className="num text-2xl font-bold">{sentRef}</p>
+      <div className="flex max-w-md flex-col gap-3 rounded-xl border border-success/30 bg-success-bg p-5">
+        <p className="text-sm text-success">{t.confirmations.transferSent(sentRef)}</p>
+        <p className="num text-3xl font-bold tracking-tight text-ink">{sentRef}</p>
         <button
           type="button"
           onClick={() => {
             router.push("/");
             router.refresh();
           }}
-          className="rounded-lg border border-ink px-4 py-2 font-semibold"
+          className="w-fit rounded-lg border border-border-strong bg-surface px-4 py-2 text-sm font-medium"
         >
           {t.common.back}
         </button>

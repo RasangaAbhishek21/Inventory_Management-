@@ -1,38 +1,63 @@
 @import "tailwindcss";
 
 /*
- * Home 47 palette (brief §9). Operational tool, bright factory light, one-handed on a
- * phone. Restraint over decoration. Light only — no dark mode (it would fight the warm
- * white the brief specifies).
- *
- * Home Yellow (#F7C517) fails contrast as a text colour on light. It is used ONLY as a
- * fill behind near-black text: the one primary action per screen, and the receipt badge.
- * Enforced by routing every use through the PrimaryAction / Badge components.
+ * Clean neutral admin palette, in the spirit of the Shopify admin the team already
+ * uses. Light grey canvas, white cards with a hairline, near-black primary actions,
+ * green / red / amber status tones. Light only.
  */
 :root {
-  --ink: #1a1a1a;          /* text, primary surfaces */
-  --page: #f5f1eb;         /* warm white page background */
-  --yellow: #f7c517;       /* primary action fill + receipt badge ONLY */
-  --sand: #d4c5a9;         /* dividers, inactive states */
-  --danger: #b23b3b;       /* destructive actions, shortfall variances */
-  --amber: #c8811f;        /* ageing indicators, surpluses */
-  --surface: #ffffff;      /* cards / inputs sitting on the page */
-  --ink-60: #5c5751;       /* secondary text */
+  --ink: #1a1a1a;            /* primary text */
+  --ink-60: #616161;         /* secondary text */
+  --page: #f1f1f1;           /* app canvas */
+  --surface: #ffffff;        /* cards, inputs, table body */
+  --surface-subtle: #fafafa; /* table headers, hover rows */
+  --border: #e1e1e1;         /* hairline borders / dividers */
+  --border-strong: #c9c9c9;
+
+  --primary: #2b2b2b;        /* primary button fill */
+  --primary-fg: #ffffff;
+
+  --success: #0c5132;
+  --success-bg: #e3f1e6;
+  --danger: #8a1c0c;
+  --danger-bg: #fdeceb;
+  --amber: #8a6116;
+  --amber-bg: #fdf3e4;
+
+  --topbar: #1a1a1a;
+  --topbar-fg: #e6e6e6;
+
+  /* legacy alias so existing `border-sand` / `text-sand` keep working */
+  --sand: var(--border);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
 
 @theme inline {
   --color-ink: var(--ink);
-  --color-page: var(--page);
-  --color-yellow: var(--yellow);
-  --color-sand: var(--sand);
-  --color-danger: var(--danger);
-  --color-amber: var(--amber);
-  --color-surface: var(--surface);
   --color-ink-60: var(--ink-60);
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-sand: var(--sand);
+
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-amber: var(--amber);
+  --color-amber-bg: var(--amber-bg);
+
+  --color-topbar: var(--topbar);
+  --color-topbar-fg: var(--topbar-fg);
 
   --font-sans: var(--font-app-sans);
-
-  --text-base: 1rem;       /* 16px minimum body (brief §9) */
+  --text-base: 0.9375rem; /* 15px — admin-tool density */
 }
 
 html {
@@ -43,29 +68,35 @@ body {
   background: var(--page);
   color: var(--ink);
   font-family: var(--font-app-sans), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   line-height: 1.5;
-  /* Tabular figures everywhere so numeric columns align (brief §9). */
   font-variant-numeric: tabular-nums;
   -webkit-text-size-adjust: 100%;
 }
 
-/* Quantities render at >= 18px (brief §9). */
 .num {
-  font-size: 1.125rem;
   font-variant-numeric: tabular-nums;
 }
 
-/* Minimum 48px tap targets (brief §9). */
-button,
-[role="button"],
-a.tap,
-input,
-select {
-  min-height: 48px;
+/* comfortable tap targets on touch devices; desktop rows stay dense */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a.tap,
+  input,
+  select {
+    min-height: 44px;
+  }
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
 }
 
 :focus-visible {
   outline: 2px solid var(--ink);
-  outline-offset: 2px;
+  outline-offset: 1px;
+  border-radius: 2px;
 }

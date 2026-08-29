@@ -82,12 +82,29 @@ export class Tx {
     return this.val<string>("select id from locations where code = $1", [code]);
   }
 
+  /**
+   * Create a fresh throwaway location. Use this instead of the seeded MAH/GON/PIL for
+   * count tests, so an opened count only snapshots this test's own products (the shared
+   * hosted DB may hold real stock at the seeded locations).
+   */
+  async makeLocation(opts: { canOriginate?: boolean } = {}): Promise<string> {
+    const suffix = randomUUID().slice(0, 6).toUpperCase();
+    return this.val<string>(
+      `insert into locations (name, code, location_type, can_originate)
+       values ($1, $2, 'factory', $3) returning id`,
+      [`Test Loc ${suffix}`, `T${suffix}`, opts.canOriginate ?? true],
+    );
+  }
+
   async reasonId(label: string): Promise<string> {
     return this.val<string>("select id from adjustment_reasons where label = $1", [label]);
   }
 
   /** Create an auth user + profile inside the transaction. Returns the user id. */
-  async makeActor(role: Role, opts: { locationCode?: string } = {}): Promise<string> {
+  async makeActor(
+    role: Role,
+    opts: { locationCode?: string; locationId?: string } = {},
+  ): Promise<string> {
     const id = randomUUID();
     const email = `test-${id}@home47.test`;
     await this.client.query(
@@ -97,7 +114,8 @@ export class Tx {
                $2, '', now(), now(), now())`,
       [id, email],
     );
-    const homeId = opts.locationCode ? await this.locationId(opts.locationCode) : null;
+    const homeId =
+      opts.locationId ?? (opts.locationCode ? await this.locationId(opts.locationCode) : null);
     await this.client.query(
       `insert into profiles (id, full_name, role, home_location_id, is_active)
        values ($1, $2, $3, $4, true)`,

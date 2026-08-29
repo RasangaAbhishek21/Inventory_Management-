@@ -37,9 +37,9 @@ export default async function LocationsPage() {
         <PrimaryAction type="submit">{t.admin.add}</PrimaryAction>
       </form>
 
-      <ul className="flex flex-col divide-y divide-sand">
+      <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
         {(locations ?? []).map((l) => (
-          <li key={l.id} className="flex flex-col gap-2 py-3">
+          <li key={l.id} className="flex flex-col gap-2 px-4 py-3">
             <form action={updateLocation.bind(null, l.id)} className="flex flex-col gap-2">
               <div className="flex gap-2">
                 <input

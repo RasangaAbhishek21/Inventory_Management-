@@ -33,9 +33,9 @@ export default async function FinishesPage() {
         <PrimaryAction type="submit">{t.admin.add}</PrimaryAction>
       </form>
 
-      <ul className="flex flex-col divide-y divide-sand">
+      <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
         {(finishes ?? []).map((f) => (
-          <li key={f.id} className="flex items-center gap-2 py-3">
+          <li key={f.id} className="flex items-center gap-2 px-4 py-3">
             <form action={updateFinish.bind(null, f.id)} className="flex flex-1 items-center gap-2">
               <input
                 name="name"

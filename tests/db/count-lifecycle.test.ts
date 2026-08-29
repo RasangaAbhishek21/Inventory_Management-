@@ -7,9 +7,9 @@ import { withRollback } from "./helpers";
 describe("count lifecycle through the RPCs the UI uses", () => {
   it("ops opens, staff counts + submits, ops posts", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
-      const staff = await t.makeActor("staff", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
+      const staff = await t.makeActor("staff", { locationId: mah });
       const a = await t.makeProduct("Count Lifecycle A", 10000);
       const b = await t.makeProduct("Count Lifecycle B", 20000);
 

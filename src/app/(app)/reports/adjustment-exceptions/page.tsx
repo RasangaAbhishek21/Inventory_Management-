@@ -50,10 +50,10 @@ export default async function AdjustmentExceptionsPage({
       {rows.length === 0 ? (
         <p className="text-ink-60">{t.reports.noExceptions}</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ink text-left">
+              <tr className="border-b border-border bg-surface-subtle text-left text-xs uppercase tracking-wide text-ink-60">
                 <th className="px-2 py-1">{t.common.date}</th>
                 <th className="px-2 py-1">{t.common.location}</th>
                 <th className="px-2 py-1">{t.common.product}</th>
@@ -65,7 +65,7 @@ export default async function AdjustmentExceptionsPage({
             </thead>
             <tbody>
               {rows.map((r, i) => (
-                <tr key={i} className="border-b border-sand">
+                <tr key={i} className="border-b border-border">
                   <td className="px-2 py-1">{r.date}</td>
                   <td className="px-2 py-1">{r.location}</td>
                   <td className="px-2 py-1">

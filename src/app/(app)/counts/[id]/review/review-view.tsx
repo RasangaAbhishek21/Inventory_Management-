@@ -84,10 +84,10 @@ export function ReviewView({
         </p>
       ) : null}
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-ink text-left">
+            <tr className="border-b border-border bg-surface-subtle text-left text-xs uppercase tracking-wide text-ink-60">
               <th className="px-2 py-1">{t.common.product}</th>
               <th className="px-2 py-1 text-right">{t.counts.system}</th>
               <th className="px-2 py-1 text-right">{t.counts.counted}</th>
@@ -97,7 +97,7 @@ export function ReviewView({
           </thead>
           <tbody>
             {lines.map((l, i) => (
-              <tr key={i} className="border-b border-sand">
+              <tr key={i} className="border-b border-border">
                 <td className="px-2 py-1">
                   {l.product}
                   {l.finish ? <span className="text-ink-60"> ({l.finish})</span> : null}

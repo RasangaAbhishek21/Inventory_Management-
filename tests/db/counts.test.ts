@@ -22,8 +22,8 @@ async function originate(
 describe("stock counts", () => {
   it("17: opening a count snapshots balances; a later movement does not change system_qty", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
       const product = await t.makeProduct("Nova Dresser", 20000);
       await t.asUser(ops);
       await originate(t, mah, product, 6, ops);
@@ -49,9 +49,9 @@ describe("stock counts", () => {
 
   it("18: an open count exposes no system_qty to staff, and the blind view omits it", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
-      const staff = await t.makeActor("staff", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
+      const staff = await t.makeActor("staff", { locationId: mah });
       const product = await t.makeProduct("Nova Dresser", 20000);
       await t.asUser(ops);
       await originate(t, mah, product, 6, ops);
@@ -78,8 +78,8 @@ describe("stock counts", () => {
 
   it("19: a count cannot be submitted while any line has a null counted_qty", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
       const product = await t.makeProduct("Nova Dresser", 20000);
       await t.asUser(ops);
       await originate(t, mah, product, 6, ops);
@@ -95,8 +95,8 @@ describe("stock counts", () => {
 
   it("20: posting counted 4 vs system 6 → one −2 adjustment, shortfall reason, dated count date, linked", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
       const product = await t.makeProduct("Nova Dresser", 20000);
       const shortfall = await t.reasonId("Count correction — shortfall");
       await t.asUser(ops);
@@ -132,8 +132,8 @@ describe("stock counts", () => {
 
   it("21: posting a count that takes an item negative succeeds (trigger bypass)", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
       const product = await t.makeProduct("Nova Dresser", 20000);
       await t.asUser(ops);
       await originate(t, mah, product, 2, ops);
@@ -166,8 +166,8 @@ describe("stock counts", () => {
 
   it("22: a second count cannot be opened while one is open or submitted", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
       await t.asUser(ops);
       await t.q(`select id from rpc_open_stock_count($1, current_date)`, [mah]);
       await expect(
@@ -178,8 +178,8 @@ describe("stock counts", () => {
 
   it("23: line accuracy = zero-variance lines ÷ lines counted (hand example: 2/3)", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
       const a = await t.makeProduct("Count A", 1000);
       const b = await t.makeProduct("Count B", 1000);
       const c = await t.makeProduct("Count C", 1000);
@@ -205,7 +205,8 @@ describe("stock counts", () => {
 
       const acc = await t.one<{ line_accuracy: string; lines_counted: string; lines_zero_variance: string }>(
         `select line_accuracy, lines_counted, lines_zero_variance
-           from v_stock_accuracy where location = 'Maharagama Factory'`,
+           from v_stock_accuracy where location_id = $1`,
+        [mah],
       );
       expect(Number(acc.lines_counted)).toBe(3);
       expect(Number(acc.lines_zero_variance)).toBe(2);

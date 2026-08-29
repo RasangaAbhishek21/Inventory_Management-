@@ -33,9 +33,9 @@ export default async function CategoriesPage() {
         <PrimaryAction type="submit">{t.admin.add}</PrimaryAction>
       </form>
 
-      <ul className="flex flex-col divide-y divide-sand">
+      <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
         {(categories ?? []).map((c) => (
-          <li key={c.id} className="flex items-center gap-2 py-3">
+          <li key={c.id} className="flex items-center gap-2 px-4 py-3">
             <form action={updateCategory.bind(null, c.id)} className="flex flex-1 items-center gap-2">
               <input
                 name="name"

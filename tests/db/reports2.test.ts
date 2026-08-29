@@ -7,8 +7,8 @@ import { config } from "@/config";
 describe("adjustment exceptions view", () => {
   it("surfaces an adjustment over the §5.5 quantity threshold, not one below", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
       const big = await t.makeProduct("Exc Big", 5000);
       const small = await t.makeProduct("Exc Small", 5000);
       const reason = await t.reasonId("Lost / unaccounted");
@@ -54,8 +54,8 @@ describe("adjustment exceptions view", () => {
 describe("stock accuracy view", () => {
   it("reports line & unit accuracy for a posted count", async () => {
     await withRollback(async (t) => {
-      const mah = await t.locationId("MAH");
-      const ops = await t.makeActor("ops_manager", { locationCode: "MAH" });
+      const mah = await t.makeLocation();
+      const ops = await t.makeActor("ops_manager", { locationId: mah });
       const a = await t.makeProduct("Acc A", 1000);
       const b = await t.makeProduct("Acc B", 1000);
       await t.asUser(ops);
@@ -80,7 +80,8 @@ describe("stock accuracy view", () => {
 
       const acc = await t.one<{ line_accuracy: string; unit_accuracy: string; units_short: string }>(
         `select line_accuracy, unit_accuracy, units_short
-           from v_stock_accuracy where location = 'Maharagama Factory'`,
+           from v_stock_accuracy where location_id = $1`,
+        [mah],
       );
       expect(Number(acc.line_accuracy)).toBeCloseTo(0.5, 3); // 1 of 2 lines zero-variance
       expect(Number(acc.unit_accuracy)).toBeCloseTo(1 - 3 / 20, 3); // 3 abs variance / 20 system units

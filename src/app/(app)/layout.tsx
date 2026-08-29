@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { Sidebar, type NavContext } from "@/components/nav/Sidebar";
+import { AppChrome } from "@/components/nav/AppChrome";
+import type { NavContext } from "@/components/nav/Sidebar";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
 export default async function AppLayout({
@@ -46,21 +47,9 @@ export default async function AppLayout({
   };
 
   return (
-    <div className="flex min-h-dvh flex-col md:flex-row">
-      <a
-        href="#content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-3 focus:py-2 focus:text-page"
-      >
-        Skip to content
-      </a>
-      <Sidebar ctx={ctx} />
-      <main
-        id="content"
-        className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 py-5 md:px-8 md:py-8"
-      >
-        <InstallPrompt />
-        {children}
-      </main>
-    </div>
+    <AppChrome ctx={ctx}>
+      <InstallPrompt />
+      {children}
+    </AppChrome>
   );
 }

@@ -62,7 +62,7 @@ export default async function CountsPage() {
       {!counts || counts.length === 0 ? (
         <p className="text-ink-60">{t.counts.none}</p>
       ) : (
-        <ul className="flex flex-col divide-y divide-sand">
+        <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
           {counts.map((c) => {
             const st = stats.get(c.id);
             const href =
@@ -73,7 +73,7 @@ export default async function CountsPage() {
                   : `/counts/${c.id}/count`;
             return (
               <li key={c.id}>
-                <Link href={href} className="tap flex flex-col gap-1 py-3">
+                <Link href={href} className="tap flex flex-col gap-1 px-4 py-3 hover:bg-surface-subtle">
                   <div className="flex items-center justify-between">
                     <span className="num font-semibold">{c.count_ref}</span>
                     <span className="text-sm text-ink-60">{STATUS_LABEL[c.status]}</span>

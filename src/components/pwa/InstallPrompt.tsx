@@ -41,7 +41,7 @@ export function InstallPrompt() {
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg bg-yellow px-4 py-3 text-ink">
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 py-3 shadow-sm">
       <span className="text-sm font-medium">Add Home 47 to your home screen.</span>
       <div className="flex shrink-0 gap-2">
         <button
@@ -50,11 +50,11 @@ export function InstallPrompt() {
             await evt.prompt();
             setEvt(null);
           }}
-          className="rounded-lg border border-ink px-3 py-1.5 text-sm font-semibold"
+          className="rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-primary-fg"
         >
           Install
         </button>
-        <button type="button" onClick={dismiss} className="px-2 text-sm">
+        <button type="button" onClick={dismiss} className="px-2 text-sm text-ink-60">
           Not now
         </button>
       </div>
