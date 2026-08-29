@@ -204,6 +204,27 @@ export const en = {
     onHandAt: "On hand",
     inTransit: "In transit",
   },
+
+  adjust: {
+    title: "Post adjustment",
+    openVariances: "Open variances",
+    increase: "Increase",
+    decrease: "Decrease",
+    reason: "Reason",
+    noteRequired: "This reason needs a note",
+    post: "Post adjustment",
+    posted: "Adjustment posted.",
+    pickReason: "Choose a reason",
+    resolve: "Resolve",
+    resolveTitle: (ref: string) => `Resolve ${ref}`,
+    resolveSummary: (units: number) =>
+      units === 1 ? "1 unit short" : `${units} units short`,
+    resolveConfirm: (units: number) =>
+      `Post an adjustment for ${units === 1 ? "1 shorted unit" : `${units} shorted units`}?`,
+    resolved: (ref: string) => `${ref} resolved.`,
+    fromVariance: (ref: string) => `Resolving the shortfall on ${ref}.`,
+    noVariances: "No open variances. Everything received matches what was sent.",
+  },
 } as const;
 
 export type Strings = typeof en;
