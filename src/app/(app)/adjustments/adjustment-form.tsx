@@ -97,7 +97,7 @@ export function AdjustmentForm({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex max-w-2xl flex-col gap-4">
       {prefill ? (
         <p className="rounded-lg border border-amber bg-surface p-3 text-sm text-amber">
           {t.adjust.fromVariance(prefill.transfer_ref)}

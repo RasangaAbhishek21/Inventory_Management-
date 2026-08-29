@@ -24,6 +24,7 @@ export const en = {
 
   nav: {
     home: "Home",
+    spotInventory: "Spot inventory",
     checkStock: "Check stock",
     originate: "Originate stock",
     sendTransfer: "Send transfer",
@@ -32,8 +33,18 @@ export const en = {
     returns: "Record a return",
     counts: "Stock counts",
     adjustments: "Adjustments",
+    openVariances: "Open variances",
     reports: "Reports",
     admin: "Admin",
+    groupRecord: "Record",
+    groupControl: "Control",
+  },
+
+  spot: {
+    title: "Spot inventory",
+    subtitle: "What's on hand right now, by location.",
+    total: "Total",
+    hideZero: "Hide zero",
   },
 
   home: {

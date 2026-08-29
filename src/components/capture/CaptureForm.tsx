@@ -93,7 +93,7 @@ export function CaptureForm({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex max-w-2xl flex-col gap-4">
       {!lockLocation ? (
         <Field label={t.common.location}>
           <select

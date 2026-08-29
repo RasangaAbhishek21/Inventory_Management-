@@ -1,117 +1,57 @@
-import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { SpotInventory } from "./spot-inventory";
 import { t } from "@/strings";
 
-interface Tile {
-  href: string;
-  label: string;
-  show: boolean;
-}
-
-export default async function HomePage() {
-  const user = await requireUser();
+export default async function SpotInventoryPage() {
+  await requireUser();
   const supabase = await createClient();
 
-  // Does this user's location originate stock?
-  let canOriginateHere = false;
-  if (user.homeLocationId) {
-    const { data: loc } = await supabase
-      .from("locations")
-      .select("can_originate")
-      .eq("id", user.homeLocationId)
-      .maybeSingle();
-    canOriginateHere = Boolean(loc?.can_originate);
-  }
+  const [
+    { data: balances },
+    { data: products },
+    { data: categories },
+    { data: locations },
+    { data: finishes },
+    { data: dispatched },
+  ] = await Promise.all([
+    supabase.from("v_stock_balances").select("location_id, product_id, finish_id, qty_on_hand"),
+    supabase.from("products").select("id, name, category_id"),
+    supabase.from("product_categories").select("id, name").order("sort_order"),
+    supabase.from("locations").select("id, name, code").eq("is_active", true).order("name"),
+    supabase.from("finishes").select("id, name"),
+    supabase.from("transfers").select("id").eq("status", "dispatched"),
+  ]);
 
-  const isOps = user.role === "ops_manager" || user.role === "admin";
-  const canCapture = user.role !== "finance";
+  const dispatchedIds = (dispatched ?? []).map((d) => d.id);
+  const { data: transitLines } = dispatchedIds.length
+    ? await supabase
+        .from("transfer_lines")
+        .select("product_id, finish_id, qty_dispatched, qty_received")
+        .in("transfer_id", dispatchedIds)
+    : { data: [] as { product_id: string; finish_id: string | null; qty_dispatched: number; qty_received: number | null }[] };
 
-  // Inbound transfers waiting to be received at this user's location (brief §8.1).
-  let inboundCount = 0;
-  if (canCapture) {
-    let q = supabase.from("v_in_transit").select("id", { count: "exact", head: true });
-    if (user.role === "staff" && user.homeLocationId) {
-      q = q.eq("to_location_id", user.homeLocationId);
-    }
-    const { count } = await q;
-    inboundCount = count ?? 0;
-  }
-
-  // An open count at this user's location (brief §8.1 — "Count stock" appears only then).
-  let openCountId: string | null = null;
-  if (canCapture && user.homeLocationId) {
-    const { data: oc } = await supabase
-      .from("stock_counts")
-      .select("id")
-      .eq("location_id", user.homeLocationId)
-      .eq("status", "open")
-      .maybeSingle();
-    openCountId = oc?.id ?? null;
-  }
-
-  const tiles: Tile[] = [
-    { href: "/transfers/receive", label: t.nav.confirmReceipt, show: canCapture },
-    { href: "/counts", label: t.nav.counts, show: true },
-    {
-      href: "/originate",
-      label: t.nav.originate,
-      show: canCapture && (canOriginateHere || isOps),
-    },
-    { href: "/transfers/new", label: t.nav.sendTransfer, show: canCapture },
-    { href: "/deliver", label: t.nav.deliver, show: canCapture },
-    { href: "/returns", label: t.nav.returns, show: canCapture },
-    { href: "/stock", label: t.nav.checkStock, show: true },
-    { href: "/adjustments", label: t.nav.adjustments, show: isOps },
-    { href: "/reports", label: t.nav.reports, show: user.role !== "staff" },
-    { href: "/admin", label: t.nav.admin, show: isOps },
-  ];
+  const inTransit = (transitLines ?? []).map((l) => ({
+    product_id: l.product_id,
+    finish_id: l.finish_id,
+    qty: l.qty_dispatched - (l.qty_received ?? 0),
+  }));
 
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-xl font-semibold">{t.home.greeting(user.fullName)}</h1>
-        <p className="text-ink-60">
-          {user.homeLocationName
-            ? t.home.atLocation(user.homeLocationName)
-            : t.home.noLocation}
-        </p>
+        <h1 className="text-xl font-semibold">{t.spot.title}</h1>
+        <p className="text-ink-60">{t.spot.subtitle}</p>
       </div>
-
-      {inboundCount > 0 ? (
-        <Link
-          href="/transfers/receive"
-          className="tap flex items-center justify-between rounded-lg bg-yellow px-4 py-4 text-ink"
-        >
-          <span className="font-semibold">{t.nav.confirmReceipt}</span>
-          <span className="num rounded-full bg-ink px-3 py-0.5 text-page">
-            {inboundCount}
-          </span>
-        </Link>
-      ) : null}
-
-      {openCountId ? (
-        <Link
-          href={`/counts/${openCountId}/count`}
-          className="tap flex items-center rounded-lg border border-ink px-4 py-4 font-semibold"
-        >
-          {t.counts.countStock}
-        </Link>
-      ) : null}
-
-      <nav className="grid grid-cols-2 gap-3">
-        {tiles
-          .filter((tile) => tile.show)
-          .map((tile) => (
-            <Link
-              key={tile.href}
-              href={tile.href}
-              className="tap flex min-h-24 items-center rounded-lg border border-sand bg-surface px-4 py-4 text-base font-medium"
-            >
-              {tile.label}
-            </Link>
-          ))}
-      </nav>
+      <SpotInventory
+        balances={balances ?? []}
+        inTransit={inTransit}
+        locations={(locations ?? []).map((l) => ({ id: l.id, name: l.name }))}
+        productNames={Object.fromEntries((products ?? []).map((p) => [p.id, p.name]))}
+        productCategory={Object.fromEntries((products ?? []).map((p) => [p.id, p.category_id]))}
+        categories={categories ?? []}
+        finishNames={Object.fromEntries((finishes ?? []).map((f) => [f.id, f.name]))}
+      />
     </div>
   );
 }

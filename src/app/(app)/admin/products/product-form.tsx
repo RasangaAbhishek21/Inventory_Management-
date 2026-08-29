@@ -108,7 +108,7 @@ export function ProductForm({
 
   if (financeOnly && product) {
     return (
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <form onSubmit={onSubmit} className="flex max-w-2xl flex-col gap-4">
         <p className="text-sm text-ink-60">{t.admin.financeCanOnlyEditCost}</p>
         <div>
           <span className="text-sm font-medium">{t.admin.name}</span>
@@ -133,7 +133,7 @@ export function ProductForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <form onSubmit={onSubmit} className="flex max-w-2xl flex-col gap-4">
       <Field label={t.admin.name}>
         <input name="name" required defaultValue={product?.name ?? ""} className={fieldInputClass} />
       </Field>
