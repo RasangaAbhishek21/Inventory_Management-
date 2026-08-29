@@ -225,6 +225,46 @@ export const en = {
     fromVariance: (ref: string) => `Resolving the shortfall on ${ref}.`,
     noVariances: "No open variances. Everything received matches what was sent.",
   },
+
+  reports: {
+    title: "Reports",
+    stockOnHand: "Stock on hand",
+    stockMovement: "Stock movement",
+    inTransit: "In transit",
+    closePack: "Monthly close pack",
+    openVariances: "Open variances",
+
+    asAt: "As at",
+    from: "From",
+    to: "To",
+    allLocations: "All locations",
+    allCategories: "All categories",
+    allTypes: "All types",
+    allUsers: "Anyone",
+    apply: "Apply",
+    downloadCsv: "Download CSV",
+    monthEnd: "Month-end date",
+    getPack: "Download close pack",
+
+    valueAtSelling: "Value at selling price",
+    valueAtStandardCost: "Value at standard cost",
+    quantity: "Quantity",
+    subtotal: "Subtotal",
+    grandTotal: "Grand total",
+    missingCostFooter: (n: number) =>
+      n === 1
+        ? "1 line has no standard cost, so its cost value is shown as zero."
+        : `${n} lines have no standard cost, so their cost value is shown as zero.`,
+    reference: "Reference",
+    enteredBy: "Entered by",
+    reverses: (id: number) => `reverses #${id}`,
+    ageHours: "Age (h)",
+    dispatchedBy: "Sender",
+    lines: "Lines",
+    noRows: "No rows for the selected range.",
+    closePackIntro:
+      "One CSV of closing stock at a month-end date — quantity and both values by location, product and finish. This is what Finance posts against in ERPNext.",
+  },
 } as const;
 
 export type Strings = typeof en;

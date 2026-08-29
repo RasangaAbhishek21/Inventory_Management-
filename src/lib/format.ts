@@ -31,6 +31,20 @@ export function isoDate(d: Date = new Date()): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** ISO date N days before today. */
+export function isoDaysAgo(n: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return isoDate(d);
+}
+
+/** ISO date for the last day of the previous month. */
+export function isoLastMonthEnd(): string {
+  const d = new Date();
+  d.setDate(0);
+  return isoDate(d);
+}
+
 /** Whole hours between two instants, floored. */
 export function hoursSince(iso: string): number {
   return Math.floor((Date.now() - new Date(iso).getTime()) / 3_600_000);
