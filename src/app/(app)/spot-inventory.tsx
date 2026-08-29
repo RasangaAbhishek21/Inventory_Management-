@@ -21,17 +21,21 @@ export function SpotInventory({
   inTransit,
   locations,
   productNames,
+  productImages,
   productCategory,
   categories,
   finishNames,
+  thumbBaseUrl,
 }: {
   balances: Balance[];
   inTransit: InTransit[];
   locations: { id: string; name: string }[];
   productNames: Record<string, string>;
+  productImages: Record<string, string | null>;
   productCategory: Record<string, string | null>;
   categories: { id: string; name: string }[];
   finishNames: Record<string, string>;
+  thumbBaseUrl: string;
 }) {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
@@ -135,6 +139,9 @@ export function SpotInventory({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-ink text-left">
+              <th className="w-10 px-2 py-2">
+                <span className="sr-only">Image</span>
+              </th>
               <th className="px-2 py-2">{t.common.product}</th>
               <th className="px-2 py-2">{t.common.finish}</th>
               {locations.map((l) => (
@@ -149,13 +156,27 @@ export function SpotInventory({
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={locations.length + 4} className="px-2 py-6 text-center text-ink-60">
+                <td colSpan={locations.length + 5} className="px-2 py-6 text-center text-ink-60">
                   {t.empty.noResults}
                 </td>
               </tr>
             ) : (
-              rows.map((r) => (
+              rows.map((r) => {
+                const img = productImages[r.product_id];
+                return (
                 <tr key={`${r.product_id}${r.finish_id ?? ""}`} className="border-b border-sand">
+                  <td className="px-2 py-1.5">
+                    {img ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`${thumbBaseUrl}/${img}?width=64&height=64&resize=cover`}
+                        alt=""
+                        className="h-8 w-8 rounded object-cover"
+                      />
+                    ) : (
+                      <span className="block h-8 w-8 rounded bg-sand/60" />
+                    )}
+                  </td>
                   <td className="px-2 py-1.5">{r.product}</td>
                   <td className="px-2 py-1.5 text-ink-60">{r.finish ?? "—"}</td>
                   {locations.map((l) => {
@@ -174,13 +195,14 @@ export function SpotInventory({
                   </td>
                   <td className="num px-2 py-1.5 text-right font-semibold">{formatQty(r.total)}</td>
                 </tr>
-              ))
+                );
+              })
             )}
           </tbody>
           {rows.length > 0 ? (
             <tfoot>
               <tr className="border-t-2 border-ink font-semibold">
-                <td className="px-2 py-2" colSpan={2}>
+                <td className="px-2 py-2" colSpan={3}>
                   {t.reports.grandTotal}
                 </td>
                 {locations.map((l) => (

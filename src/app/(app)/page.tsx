@@ -1,5 +1,6 @@
 import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { STORAGE_RENDER_BASE } from "@/lib/capture-data";
 import { SpotInventory } from "./spot-inventory";
 import { t } from "@/strings";
 
@@ -16,7 +17,7 @@ export default async function SpotInventoryPage() {
     { data: dispatched },
   ] = await Promise.all([
     supabase.from("v_stock_balances").select("location_id, product_id, finish_id, qty_on_hand"),
-    supabase.from("products").select("id, name, category_id"),
+    supabase.from("products").select("id, name, category_id, image_path"),
     supabase.from("product_categories").select("id, name").order("sort_order"),
     supabase.from("locations").select("id, name, code").eq("is_active", true).order("name"),
     supabase.from("finishes").select("id, name"),
@@ -48,9 +49,11 @@ export default async function SpotInventoryPage() {
         inTransit={inTransit}
         locations={(locations ?? []).map((l) => ({ id: l.id, name: l.name }))}
         productNames={Object.fromEntries((products ?? []).map((p) => [p.id, p.name]))}
+        productImages={Object.fromEntries((products ?? []).map((p) => [p.id, p.image_path]))}
         productCategory={Object.fromEntries((products ?? []).map((p) => [p.id, p.category_id]))}
         categories={categories ?? []}
         finishNames={Object.fromEntries((finishes ?? []).map((f) => [f.id, f.name]))}
+        thumbBaseUrl={STORAGE_RENDER_BASE}
       />
     </div>
   );
