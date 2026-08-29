@@ -17,21 +17,30 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
-      - run: npm run test
+      - run: npm run test:unit
       - run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
 
   database:
-    # pgTAP acceptance tests (brief §11). Runs the local Supabase stack in Docker,
-    # which GitHub runners provide. Added from step 2 onward.
+    # Ledger acceptance tests (brief §11) against a fresh local Postgres. The
+    # Supabase CLI runs its stack in Docker, which GitHub runners provide.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
       - uses: supabase/setup-cli@v1
         with:
           version: latest
       - run: supabase db start
       - run: supabase db reset
-      - run: supabase test db
+      - name: Run DB acceptance tests
+        run: npm run test:db
+        env:
+          # `supabase db start` prints this; it is the standard local connection.
+          SUPABASE_DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
