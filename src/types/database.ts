@@ -405,11 +405,184 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: { [_ in never]: never };
+    Views: {
+      v_stock_balances: {
+        Row: {
+          location_id: string;
+          product_id: string;
+          finish_id: string | null;
+          qty_on_hand: number;
+          value_at_selling_price: number;
+          value_at_standard_cost: number;
+          lines_missing_cost: number;
+        };
+        Relationships: [];
+      };
+      v_in_transit: {
+        Row: {
+          id: string;
+          transfer_ref: string;
+          from_location_id: string;
+          from_location: string;
+          to_location_id: string;
+          to_location: string;
+          dispatch_date: string;
+          dispatched_at: string;
+          dispatched_by: string;
+          dispatched_by_name: string;
+          age_hours: number;
+          line_count: number;
+          value_at_selling_price: number;
+        };
+        Relationships: [];
+      };
+      v_open_variances: {
+        Row: {
+          transfer_id: string;
+          transfer_ref: string;
+          to_location_id: string;
+          to_location: string;
+          receipt_date: string | null;
+          line_id: string;
+          product_id: string;
+          product: string;
+          finish_id: string | null;
+          qty_dispatched: number;
+          qty_received: number;
+          shortfall: number;
+          unit_selling_price: number;
+          shortfall_value: number;
+        };
+        Relationships: [];
+      };
+      v_adjustment_exceptions: {
+        Row: {
+          id: number;
+          transaction_date: string;
+          month: string;
+          location_id: string;
+          location: string;
+          product_id: string;
+          product: string;
+          finish_id: string | null;
+          quantity: number;
+          unit_selling_price: number;
+          abs_value_at_selling_price: number;
+          reason_id: string | null;
+          reason: string | null;
+          notes: string | null;
+          entered_by: string;
+          entered_by_name: string;
+          entered_at: string;
+        };
+        Relationships: [];
+      };
+      v_stock_accuracy: {
+        Row: {
+          location_id: string;
+          location: string;
+          month: string;
+          lines_counted: number;
+          lines_zero_variance: number;
+          line_accuracy: number | null;
+          unit_accuracy: number | null;
+          units_over: number;
+          units_short: number;
+          net_value_impact: number;
+        };
+        Relationships: [];
+      };
+      v_count_lines_blind: {
+        Row: {
+          id: string;
+          stock_count_id: string;
+          product_id: string;
+          finish_id: string | null;
+          counted_qty: number | null;
+          notes: string | null;
+        };
+        Relationships: [];
+      };
+      v_count_late_movements: {
+        Row: {
+          stock_count_id: string;
+          movement_id: number;
+          product_id: string;
+          finish_id: string | null;
+          quantity: number;
+          transaction_date: string;
+          entered_at: string;
+        };
+        Relationships: [];
+      };
+    };
     Functions: {
       auth_role: { Args: Record<PropertyKey, never>; Returns: Role };
       auth_home_location: { Args: Record<PropertyKey, never>; Returns: string };
       auth_is_active: { Args: Record<PropertyKey, never>; Returns: boolean };
+      fn_avg_unit_value: {
+        Args: { p_location: string; p_product: string; p_finish: string | null };
+        Returns: { avg_selling: number | null; avg_cost: number | null }[];
+      };
+      fn_stock_balances: {
+        Args: { as_at: string; p_location?: string | null };
+        Returns: {
+          location_id: string;
+          product_id: string;
+          finish_id: string | null;
+          qty_on_hand: number;
+          value_at_selling_price: number;
+          value_at_standard_cost: number;
+          lines_missing_cost: number;
+        }[];
+      };
+      rpc_dispatch_transfer: {
+        Args: {
+          p_from: string;
+          p_to: string;
+          p_date: string;
+          p_order: string | null;
+          p_notes: string | null;
+          p_lines: Json;
+        };
+        Returns: Database["public"]["Tables"]["transfers"]["Row"];
+      };
+      rpc_receive_transfer: {
+        Args: { p_transfer: string; p_date: string; p_lines: Json };
+        Returns: Database["public"]["Tables"]["transfers"]["Row"];
+      };
+      rpc_cancel_transfer: {
+        Args: { p_transfer: string; p_reason: string | null };
+        Returns: Database["public"]["Tables"]["transfers"]["Row"];
+      };
+      rpc_open_stock_count: {
+        Args: { p_location: string; p_date: string };
+        Returns: Database["public"]["Tables"]["stock_counts"]["Row"];
+      };
+      rpc_add_count_line: {
+        Args: { p_count: string; p_product: string; p_finish: string | null };
+        Returns: Database["public"]["Tables"]["stock_count_lines"]["Row"];
+      };
+      rpc_set_count_line: {
+        Args: { p_line: string; p_qty: number | null; p_notes?: string | null };
+        Returns: undefined;
+      };
+      rpc_submit_stock_count: {
+        Args: { p_count: string };
+        Returns: Database["public"]["Tables"]["stock_counts"]["Row"];
+      };
+      rpc_post_stock_count: {
+        Args: { p_count: string };
+        Returns: Database["public"]["Tables"]["stock_counts"]["Row"];
+      };
+      rpc_cancel_stock_count: {
+        Args: { p_count: string; p_reason?: string | null };
+        Returns: Database["public"]["Tables"]["stock_counts"]["Row"];
+      };
+      rpc_commit_opening_balances: {
+        Args: { p_go_live: string; p_rows: Json; p_force?: boolean };
+        Returns: number;
+      };
     };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };

@@ -13,6 +13,7 @@ export default async function AdminIndex() {
     { href: "/admin/categories", label: t.admin.categories, show: isOps },
     { href: "/admin/locations", label: t.admin.locations, show: isOps },
     { href: "/admin/users", label: t.admin.users, show: isAdmin },
+    { href: "/admin/opening-balances", label: t.opening.title, show: isAdmin },
   ].filter((x) => x.show);
 
   return (

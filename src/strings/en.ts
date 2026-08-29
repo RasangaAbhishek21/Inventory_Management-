@@ -134,6 +134,32 @@ export const en = {
     financeCanOnlyEditCost: "Finance can change only the standard cost.",
     none: "None",
   },
+
+  opening: {
+    title: "Opening balances",
+    intro:
+      "One-time import of the stock on hand at go-live. Upload a CSV, review every row, then commit. A single bad row commits nothing.",
+    columns: "Columns: location_code, product_name, finish_name, quantity, unit_selling_price, unit_standard_cost. finish_name and unit_standard_cost are optional.",
+    chooseFile: "Choose CSV",
+    goLiveDate: "Go-live date",
+    preview: "Preview",
+    parsing: "Reading the file…",
+    checking: "Checking rows…",
+    committing: "Committing…",
+    noFile: "Choose a CSV file to begin.",
+    parseError: "That file could not be read as CSV.",
+    missingColumns: (cols: string) => `The CSV is missing these columns: ${cols}.`,
+    rowsOk: (n: number) => `${n} rows ready.`,
+    rowsWithErrors: (bad: number, total: number) =>
+      `${bad} of ${total} rows have problems. Fix the file and preview again.`,
+    totals: (units: number, value: string) => `${units} units · ${value} at selling price`,
+    commit: (n: number) => `Commit ${n} rows`,
+    committed: (n: number) => `${n} opening movements recorded.`,
+    alreadyImported:
+      "Opening balances have already been imported. Running this again will add more opening movements on top of what is there. Only do this if you know why.",
+    confirmForce: "Yes, import again anyway",
+    line: "Line",
+  },
 } as const;
 
 export type Strings = typeof en;
