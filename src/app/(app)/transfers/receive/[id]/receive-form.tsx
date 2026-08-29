@@ -15,6 +15,7 @@ interface LineView {
   product: string;
   finish: string | null;
   qty_dispatched: number;
+  imageUrl: string | null;
 }
 
 export function ReceiveForm({
@@ -62,23 +63,38 @@ export function ReceiveForm({
     <div className="flex flex-col gap-4">
       <ul className="flex flex-col gap-4">
         {lines.map((l) => (
-          <li key={l.line_id} className="flex flex-col gap-2 rounded-lg border border-sand bg-surface p-3">
-            <span className="font-medium">
-              {l.product}
-              {l.finish ? ` (${l.finish})` : ""}
-            </span>
-            <span className="text-sm text-ink-60">
-              {t.capture.dispatchedQty}: <span className="num">{l.qty_dispatched}</span>
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-sm">{t.capture.receivedQty}</span>
-              <Stepper
-                value={received[l.line_id]}
-                min={0}
-                max={l.qty_dispatched}
-                onChange={(n) => setReceived((r) => ({ ...r, [l.line_id]: n }))}
-              />
+          <li
+            key={l.line_id}
+            className="flex items-start gap-3 rounded-lg border border-sand bg-surface p-3"
+          >
+            <div className="flex flex-1 flex-col gap-2">
+              <span className="font-medium">
+                {l.product}
+                {l.finish ? ` (${l.finish})` : ""}
+              </span>
+              <span className="text-sm text-ink-60">
+                {t.capture.dispatchedQty}: <span className="num">{l.qty_dispatched}</span>
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm">{t.capture.receivedQty}</span>
+                <Stepper
+                  value={received[l.line_id]}
+                  min={0}
+                  max={l.qty_dispatched}
+                  onChange={(n) => setReceived((r) => ({ ...r, [l.line_id]: n }))}
+                />
+              </div>
             </div>
+            {l.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={l.imageUrl}
+                alt=""
+                className="h-16 w-16 shrink-0 rounded-md object-cover"
+              />
+            ) : (
+              <span className="h-16 w-16 shrink-0 rounded-md bg-sand/60" />
+            )}
           </li>
         ))}
       </ul>
