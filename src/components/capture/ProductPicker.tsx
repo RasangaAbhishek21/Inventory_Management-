@@ -15,10 +15,13 @@ export function ProductPicker({
   products,
   thumbBaseUrl,
   onSelect,
+  emptyLabel,
 }: {
   products: PickerProduct[];
   thumbBaseUrl: string;
   onSelect: (p: PickerProduct) => void;
+  /** Shown when the whole product list is empty (e.g. nothing at the source location). */
+  emptyLabel?: string;
 }) {
   const [q, setQ] = useState("");
   const matches = useMemo(() => {
@@ -26,6 +29,9 @@ export function ProductPicker({
     if (!needle) return products.slice(0, 8);
     return products.filter((p) => p.name.toLowerCase().includes(needle)).slice(0, 12);
   }, [q, products]);
+
+  const noneMessage =
+    products.length === 0 ? (emptyLabel ?? t.empty.noResults) : t.empty.noResults;
 
   return (
     <div className="flex flex-col gap-2">
@@ -38,7 +44,7 @@ export function ProductPicker({
       />
       <ul className="flex flex-col divide-y divide-sand rounded-lg border border-sand">
         {matches.length === 0 ? (
-          <li className="px-3 py-3 text-sm text-ink-60">{t.empty.noResults}</li>
+          <li className="px-3 py-3 text-sm text-ink-60">{noneMessage}</li>
         ) : (
           matches.map((p) => (
             <li key={p.id}>

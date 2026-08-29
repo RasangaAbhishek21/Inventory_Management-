@@ -187,6 +187,7 @@ export const en = {
     toLocation: "To",
     pickAProduct: "Pick a product",
     noLinesYet: "No lines added yet.",
+    nothingAtSource: (loc: string) => `Nothing in stock at ${loc}.`,
 
     originateTitle: "Originate stock",
     originateAction: "Record stock",

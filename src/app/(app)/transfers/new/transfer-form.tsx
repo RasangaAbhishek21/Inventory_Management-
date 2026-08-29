@@ -61,6 +61,14 @@ export function TransferForm({
     return m;
   }, [balances, from]);
 
+  // Only offer products that actually have stock at the chosen source (brief §8.3).
+  const availableProducts = useMemo(() => {
+    const withStock = new Set(
+      balances.filter((b) => b.location_id === from && b.qty_on_hand > 0).map((b) => b.product_id),
+    );
+    return products.filter((p) => withStock.has(p.id));
+  }, [products, balances, from]);
+
   const fromName = locations.find((l) => l.id === from)?.name ?? "";
   const patch = (key: string, next: Partial<Line>) =>
     setLines((cur) => cur.map((l) => (l.key === key ? { ...l, ...next } : l)));
@@ -139,8 +147,9 @@ export function TransferForm({
       </div>
 
       <ProductPicker
-        products={products}
+        products={availableProducts}
         thumbBaseUrl={thumbBaseUrl}
+        emptyLabel={t.capture.nothingAtSource(fromName)}
         onSelect={(p) =>
           setLines((cur) => [
             ...cur,
