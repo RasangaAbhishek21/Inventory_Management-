@@ -160,6 +160,50 @@ export const en = {
     confirmForce: "Yes, import again anyway",
     line: "Line",
   },
+
+  capture: {
+    addLine: "Add line",
+    lines: (n: number) => (n === 1 ? "1 line" : `${n} lines`),
+    remove: "Remove",
+    variantNote: "Variant note",
+    variantNoteEg: "e.g. custom 1200mm width",
+    orderNumber: "Order number",
+    transactionDate: "Date it happened",
+    deliveryDate: "Delivery date",
+    reasonNote: "What was returned and why",
+    availableAt: (loc: string) => `available at ${loc}`,
+    fromLocation: "From",
+    toLocation: "To",
+    pickAProduct: "Pick a product",
+    noLinesYet: "No lines added yet.",
+
+    originateTitle: "Originate stock",
+    originateAction: "Record stock",
+    cannotOriginateHere: "Stock can't be originated at your location.",
+
+    transferTitle: "Send transfer",
+    transferAction: "Send transfer",
+    transferSameLocation: "Choose a different destination.",
+
+    receiveTitle: "Confirm receipt",
+    receiveOne: "Confirm receipt",
+    dispatchedQty: "Sent",
+    receivedQty: "Received",
+    ageHours: (h: number) => (h < 1 ? "just now" : h === 1 ? "1 hour ago" : `${h} hours ago`),
+    varianceWarning:
+      "You received fewer than were sent. This will be reported as a variance for the Operations Manager to resolve.",
+
+    deliverTitle: "Deliver to customer",
+    deliverAction: "Record delivery",
+
+    returnTitle: "Record a return",
+    returnAction: "Record return",
+
+    checkStockTitle: "Check stock",
+    checkStockPrompt: "Type a product name.",
+    onHandAt: "On hand",
+    inTransit: "In transit",
+  },
 } as const;
 
 export type Strings = typeof en;

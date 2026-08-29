@@ -27,8 +27,16 @@ export default async function HomePage() {
   const isOps = user.role === "ops_manager" || user.role === "admin";
   const canCapture = user.role !== "finance";
 
-  // TODO(step 5): inbound-transfer badge count once transfer RLS + data exist.
-  const inboundCount = 0;
+  // Inbound transfers waiting to be received at this user's location (brief §8.1).
+  let inboundCount = 0;
+  if (canCapture) {
+    let q = supabase.from("v_in_transit").select("id", { count: "exact", head: true });
+    if (user.role === "staff" && user.homeLocationId) {
+      q = q.eq("to_location_id", user.homeLocationId);
+    }
+    const { count } = await q;
+    inboundCount = count ?? 0;
+  }
 
   const tiles: Tile[] = [
     { href: "/transfers/receive", label: t.nav.confirmReceipt, show: canCapture },
