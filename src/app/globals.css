@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
+/*
+ * Home 47 palette (brief §9). Operational tool, bright factory light, one-handed on a
+ * phone. Restraint over decoration. Light only — no dark mode (it would fight the warm
+ * white the brief specifies).
+ *
+ * Home Yellow (#F7C517) fails contrast as a text colour on light. It is used ONLY as a
+ * fill behind near-black text: the one primary action per screen, and the receipt badge.
+ * Enforced by routing every use through the PrimaryAction / Badge components.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ink: #1a1a1a;          /* text, primary surfaces */
+  --page: #f5f1eb;         /* warm white page background */
+  --yellow: #f7c517;       /* primary action fill + receipt badge ONLY */
+  --sand: #d4c5a9;         /* dividers, inactive states */
+  --danger: #b23b3b;       /* destructive actions, shortfall variances */
+  --amber: #c8811f;        /* ageing indicators, surpluses */
+  --surface: #ffffff;      /* cards / inputs sitting on the page */
+  --ink-60: #5c5751;       /* secondary text */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: var(--ink);
+  --color-page: var(--page);
+  --color-yellow: var(--yellow);
+  --color-sand: var(--sand);
+  --color-danger: var(--danger);
+  --color-amber: var(--amber);
+  --color-surface: var(--surface);
+  --color-ink-60: var(--ink-60);
+
+  --font-sans: var(--font-app-sans);
+
+  --text-base: 1rem;       /* 16px minimum body (brief §9) */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-app-sans), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  /* Tabular figures everywhere so numeric columns align (brief §9). */
+  font-variant-numeric: tabular-nums;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Quantities render at >= 18px (brief §9). */
+.num {
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Minimum 48px tap targets (brief §9). */
+button,
+[role="button"],
+a.tap,
+input,
+select {
+  min-height: 48px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
